@@ -108,11 +108,49 @@ const editUserCtrl =  (req, res) => {
     res.json("Editer un user");
 }
 //
+const followUserCtrl =  async(req, res,next) => {
+    try {
+        // 1. Recuperer le user que l'on veut suivre
+        const userToFollow = await User.findById(req.params.id);
+        // 2. Recuperer le user qui veut suivre
+        const userFollowing = await User.findById(req.userConnected);
+        // 3. Tester si les users existent et sont different
+        if(req.params.id!==req.userConnected && userToFollow && userFollowing){
+            // Tester si on ne follow pas deja le profile
+            const alreadyFolling = userToFollow.followers
+                            .find(f => f.toString() === req.userConnected);
+            if(alreadyFolling){
+                return next(new Error("Vous etes deja follower de ce profile"))
+            }
+            // 4. Ajouter l'id de celui qui c connecter dans le tableau de followers de celui qu'on veut suivre
+            userToFollow.followers.push(req.userConnected);
+            userToFollow.save();
+            // 5. Ajouter l'id de celui que je suis dans mon tableau de following
+            userFollowing.following.push(userToFollow._id);
+            userFollowing.save();
+            return res.json({
+                status:"ok",
+                msg:"You are now following this profils"
+            })
+        }
+        return next(new Error('Impossible de suivre ce profile!!!'));
+        
+        
+
+        res.json({
+            msg: "Following this profile"
+        })
+    } catch (error) {
+        return next(new Error(error.message));
+    }
+}
+//
 module.exports = {
     registerUserCtrl,
     loginUserCtrl,
     profileUserCtrl,
     usersCtrl,
     deleteUserCtrl,
-    editUserCtrl
+    editUserCtrl,
+    followUserCtrl
 }

@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUserCtrl, loginUserCtrl, profileUserCtrl, usersCtrl, deleteUserCtrl, editUserCtrl } = require('../controllers/userController');
+const { registerUserCtrl, loginUserCtrl, profileUserCtrl, usersCtrl, deleteUserCtrl, editUserCtrl, followUserCtrl } = require('../controllers/userController');
 const isLogin = require('../middlewares/isLogin');
 
 const userRouter = express.Router();
@@ -11,5 +11,7 @@ userRouter.get(`/profile`,isLogin, profileUserCtrl);
 userRouter.get(`/`, usersCtrl);
 userRouter.delete(`/:id`, deleteUserCtrl);
 userRouter.put(`/:id`,editUserCtrl);
+//
+userRouter.get(`/follow/:id`,isLogin,followUserCtrl);
 
 module.exports = userRouter;
