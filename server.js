@@ -28,6 +28,12 @@ app.use(`${API_PREFIX}/comments`,commentRouter);
 
 // Gestion des erreurs
 app.use(errorHandler);
+//
+app.use('*',(req,res)=>{
+    res.status(404).json({
+        msg: `"${req.originalUrl}" - Route introuvable!`
+    })
+});
 
 
 
